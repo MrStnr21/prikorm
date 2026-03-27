@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Прикорм">
+<meta name="theme-color" content="#e8878c">
+<title>Прикорм при АБКМ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#fef6f3;--card:#fff;--text:#3d2c2c;--muted:#a08888;
+--accent:#e8878c;--accent2:#b8d4c8;--accent3:#d4707a;
+--danger:#e63946;--warn:#f4a261;--ok:#81b29a;
+--shadow:0 2px 12px rgba(180,120,120,.1);
+--radius:16px;
+--table-alt:#fef0ed;--table-head:#fce4e0;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+padding:0;min-height:100vh;padding-bottom:80px;-webkit-tap-highlight-color:transparent}
+.container{max-width:480px;margin:0 auto;padding:16px}
+header{background:linear-gradient(135deg,#e8878c,#d4707a);color:#fff;
+padding:env(safe-area-inset-top,20px) 20px 20px;text-align:center;position:sticky;top:0;z-index:100}
+header h1{font-size:22px;font-weight:800;letter-spacing:-.5px}
+header p{font-size:12px;opacity:.7;margin-top:4px}
+nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;
+border-top:1px solid #f0d8d5;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;padding:10px 4px 8px;border:none;background:none;font-family:inherit;
+font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav button.active{color:var(--accent)}
+nav button svg{width:22px;height:22px}
+.tab{display:none}
+.tab.active{display:block}
+.section-title{font-size:15px;font-weight:800;color:var(--accent3);margin:20px 0 10px;
+display:flex;align-items:center;gap:8px}
+.section-title span{font-size:18px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px 16px;
+margin-bottom:10px;box-shadow:var(--shadow)}
+.product-row{display:flex;align-items:center;gap:10px;padding:10px 0;
+border-bottom:1px solid #f5e0dd}
+.product-row:last-child{border:none}
+.product-check{width:26px;height:26px;border-radius:8px;border:2px solid #ddd;
+background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+flex-shrink:0;transition:all .2s}
+.product-check.done{background:var(--ok);border-color:var(--ok)}
+.product-check.done::after{content:'✓';color:#fff;font-weight:800;font-size:14px}
+.product-check.reacted{background:var(--danger);border-color:var(--danger)}
+.product-check.reacted::after{content:'✕';color:#fff;font-weight:800;font-size:14px}
+.product-info{flex:1;min-width:0}
+.product-name{font-weight:700;font-size:14px}
+.product-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.product-type{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;
+display:inline-block;margin-top:4px}
+.type-vegetable{background:#e8f5e9;color:#2e7d32}
+.type-cereal{background:#fff3e0;color:#e65100}
+.type-meat{background:#fce4ec;color:#c62828}
+.type-fruit{background:#f3e5f5;color:#7b1fa2}
+.type-egg{background:#fff9c4;color:#f57f17}
+.type-fish{background:#e0f7fa;color:#00838f}
+.type-other{background:#f5f5f5;color:#616161}
+.product-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-sm{width:32px;height:32px;border-radius:8px;border:none;font-size:14px;
+cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn-ok{background:#e8f5e9;color:#2e7d32}
+.btn-warn{background:#fff3e0;color:#e65100}
+.btn-danger{background:#fce4ec;color:#c62828}
+.progress-bar{height:6px;background:#eee;border-radius:3px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .3s}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:16px;
+text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:28px;font-weight:800;color:var(--accent)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+.banned-item{display:flex;align-items:center;gap:8px;padding:8px 0;
+border-bottom:1px solid #f5e0dd;font-size:13px}
+.banned-item:last-child{border:none}
+.banned-icon{font-size:16px}
+.day-tracker{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.day-dot{width:100%;aspect-ratio:1;border-radius:6px;border:2px solid #eee;
+display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
+color:var(--muted);cursor:pointer;transition:all .2s}
+.day-dot.filled{background:var(--ok);border-color:var(--ok);color:#fff}
+.day-dot.today{border-color:var(--accent)}
+.volume-info{font-size:12px;color:var(--accent);font-weight:700;margin-top:6px}
+.expand-btn{background:none;border:none;color:var(--accent);font-family:inherit;
+font-size:13px;font-weight:700;cursor:pointer;padding:4px 0;margin-top:6px}
+.detail-panel{display:none;margin-top:8px;padding:10px;background:#fef0ed;border-radius:12px}
+.detail-panel.open{display:block}
+.detail-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.note-input{width:100%;border:1px solid #f0d8d5;border-radius:8px;padding:8px 10px;
+font-family:inherit;font-size:12px;margin-top:6px;resize:none;background:#fff}
+.reset-btn{background:var(--danger);color:#fff;border:none;border-radius:12px;
+padding:12px 20px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
+width:100%;margin-top:20px}
+.info-block{background:#fef0ed;border-left:3px solid var(--accent);padding:12px;
+border-radius:0 12px 12px 0;margin-bottom:12px;font-size:12px;line-height:1.5}
+.info-block b{color:var(--accent3)}
+.month-header{font-size:13px;font-weight:800;color:#fff;background:var(--accent);
+padding:6px 12px;border-radius:10px;margin:16px 0 8px;display:inline-block}
+.search-bar{width:100%;padding:10px 14px;border:2px solid #f0d8d5;border-radius:12px;
+font-family:inherit;font-size:14px;margin-bottom:12px;background:#fff;outline:none}
+.search-bar:focus{border-color:var(--accent)}
+.hidden{display:none!important}
+@media(prefers-color-scheme:dark){
+:root{--bg:#2a1f2d;--card:#362a38;--text:#f0e4e6;--muted:#a08888;
+--shadow:0 2px 12px rgba(0,0,0,.3);--table-alt:#3d2f3f;--table-head:#4a3a4c}
+nav{background:#362a38;border-color:#4a3a4c}
+.search-bar{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}
+.detail-panel{background:#3d2f3f}
+.note-input{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}
+.info-block{background:#3d2f3f}
+header{background:linear-gradient(135deg,#8c4a5a,#6e3648)}
+.product-row{border-bottom-color:#4a3a4c}
+.product-check{background:#3d2f3f;border-color:#5a4a5c}
+.day-dot{border-color:#5a4a5c;color:var(--muted)}
+.progress-bar{background:#4a3a4c}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🍼 Прикорм при АБКМ</h1>
+<p>Трекер введения продуктов</p>
+</header>
+
+<div class="container">
+<!-- TAB: Tracker -->
+<div class="tab active" id="tab-tracker">
+<input class="search-bar" type="text" placeholder="🔍 Найти продукт..." id="search" oninput="filterProducts()">
+<div id="tracker-content"></div>
+</div>
+
+<!-- TAB: Schedule -->
+<div class="tab" id="tab-schedule">
+<div id="schedule-content"></div>
+</div>
+
+<!-- TAB: Banned -->
+<div class="tab" id="tab-banned">
+<div class="section-title"><span>🚫</span> Запрещено при АБКМ</div>
+<div class="card">
+<div class="banned-item"><span class="banned-icon">🥛</span>Молоко (коровье, козье, овечье)</div>
+<div class="banned-item"><span class="banned-icon">🧈</span>Сливочное масло</div>
+<div class="banned-item"><span class="banned-icon">🧀</span>Сыр, творог, сметана</div>
+<div class="banned-item"><span class="banned-icon">🥛</span>Кефир, йогурт, ряженка</div>
+<div class="banned-item"><span class="banned-icon">🥩</span>Говядина, телятина</div>
+<div class="banned-item"><span class="banned-icon">🍼</span>Молочные каши</div>
+<div class="banned-item"><span class="banned-icon">🍪</span>Печенье/хлеб с молоком в составе</div>
+<div class="banned-item"><span class="banned-icon">🐐</span>Смеси на козьем молоке</div>
+<div class="banned-item"><span class="banned-icon">⚠️</span>ГА-смеси (частичный гидролиз)</div>
+</div>
+<div class="info-block">
+<b>Читайте этикетки!</b> Искать в составе: молоко, казеин, казеинат, сыворотка, лактальбумин, лактоглобулин, молочный жир. Маркировка «может содержать следы молока» — тоже стоп.
+</div>
+<div class="section-title"><span>⚡</span> Перекрёстная аллергия</div>
+<div class="card">
+<div class="banned-item"><span class="banned-icon">🐐</span>Козье молоко — реакция >90%</div>
+<div class="banned-item"><span class="banned-icon">🐄</span>Говядина — реакция 10–20%</div>
+<div class="banned-item"><span class="banned-icon">🫘</span>Соя (не-IgE) — реакция до 50–60%</div>
+<div class="banned-item"><span class="banned-icon">🥚</span>Яйцо — возможна перекрёстная</div>
+</div>
+<div class="section-title"><span>✅</span> Безопасные замены</div>
+<div class="card">
+<div class="banned-item"><span class="banned-icon">🫒</span>Растительное масло вместо сливочного</div>
+<div class="banned-item"><span class="banned-icon">🐇</span>Кролик, индейка, свинина вместо говядины</div>
+<div class="banned-item"><span class="banned-icon">🥣</span>Безмолочные каши на воде или смеси</div>
+<div class="banned-item"><span class="banned-icon">💊</span>Лечебная смесь — основа рациона до 12+ мес.</div>
+</div>
+</div>
+
+<!-- TAB: Stats -->
+<div class="tab" id="tab-stats">
+<div class="stats-grid" id="stats-grid"></div>
+<div class="section-title"><span>📋</span> Правила введения</div>
+<div class="card" style="font-size:13px;line-height:1.6">
+<p>🕐 Новый продукт — <b>утром (9–11:00)</b></p>
+<p>📅 Один новый продукт за <b>7–14 дней</b></p>
+<p>📈 Наращивание: ½ ч.л. → удвоение → 150 г</p>
+<p>👀 При реакции — убрать, повтор через <b>1–2 мес.</b></p>
+<p>🚫 Не вводить при болезни, прививках, зубах</p>
+<p>📝 Записывать: кожу, стул, поведение, сон</p>
+</div>
+<div class="section-title"><span>📏</span> Объёмы по возрастам</div>
+<div class="card" style="font-size:12px;overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;text-align:center;color:var(--text)">
+<tr style="background:var(--table-head);font-weight:700"><td style="text-align:left;padding:6px">Продукт</td><td style="padding:6px">5м</td><td>6м</td><td>7м</td><td>8м</td><td>9-12м</td></tr>
+<tr><td style="text-align:left;padding:4px">Овощи, г</td><td>150</td><td>150</td><td>150</td><td>150</td><td>150</td></tr>
+<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Каша, г</td><td>150</td><td>150</td><td>150</td><td>180</td><td>200</td></tr>
+<tr><td style="text-align:left;padding:4px">Мясо, г</td><td>—</td><td>30</td><td>50</td><td>70</td><td>80-100</td></tr>
+<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Фрукты, г</td><td>—</td><td>60</td><td>70</td><td>80</td><td>100</td></tr>
+<tr><td style="text-align:left;padding:4px">Желток</td><td>—</td><td>—</td><td>¼</td><td>½</td><td>½</td></tr>
+<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Рыба, г</td><td>—</td><td>—</td><td>—</td><td>30</td><td>30-60</td></tr>
+<tr><td style="text-align:left;padding:4px">Масло, мл</td><td>3</td><td>5</td><td>5</td><td>6</td><td>6</td></tr>
+</table>
+</div>
+<div class="section-title"><span>🔄</span> Сбросить все данные</div>
+<button class="reset-btn" onclick="resetAll()">Сбросить прогресс</button>
+</div>
+</div>
+
+<nav>
+<button class="active" onclick="switchTab('tracker',this)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+Трекер
+</button>
+<button onclick="switchTab('schedule',this)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+План
+</button>
+<button onclick="switchTab('banned',this)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+Запрещено
+</button>
+<button onclick="switchTab('stats',this)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+Инфо
+</button>
+</nav>
+
+<script>
+const PRODUCTS = [
+// 5 месяцев — старт с овощей
+{id:'zucchini',name:'Кабачок',type:'vegetable',month:5,week:1,target:150,emoji:'🥒'},
+{id:'cauliflower',name:'Цветная капуста',type:'vegetable',month:5,week:2,target:150,emoji:'🥦'},
+{id:'broccoli',name:'Брокколи',type:'vegetable',month:5,week:3,target:150,emoji:'🥦'},
+{id:'pumpkin',name:'Тыква (светлая)',type:'vegetable',month:5,week:4,target:150,emoji:'🎃'},
+{id:'patisson',name:'Патиссон',type:'vegetable',month:5,week:5,target:150,emoji:'🫛'},
+// 6 месяцев — каши + овощи
+{id:'buckwheat',name:'Гречневая каша',type:'cereal',month:6,week:6,target:150,emoji:'🥣'},
+{id:'rice',name:'Рисовая каша',type:'cereal',month:6,week:7,target:150,emoji:'🍚'},
+{id:'corn',name:'Кукурузная каша',type:'cereal',month:6,week:8,target:150,emoji:'🌽'},
+{id:'potato',name:'Картофель',type:'vegetable',month:6,week:9,target:150,emoji:'🥔'},
+// 7 месяцев — мясо + фрукты
+{id:'rabbit',name:'Кролик',type:'meat',month:7,week:10,target:50,emoji:'🐇'},
+{id:'turkey',name:'Индейка',type:'meat',month:7,week:11,target:50,emoji:'🦃'},
+{id:'horse',name:'Конина',type:'meat',month:7,week:12,target:50,emoji:'🐴'},
+{id:'apple',name:'Яблоко зелёное',type:'fruit',month:7,week:13,target:70,emoji:'🍏'},
+{id:'pear',name:'Груша',type:'fruit',month:7,week:14,target:70,emoji:'🍐'},
+{id:'banana',name:'Банан',type:'fruit',month:7,week:15,target:70,emoji:'🍌'},
+{id:'green_peas',name:'Зелёный горошек',type:'vegetable',month:7,week:16,target:150,emoji:'🟢'},
+// 8 месяцев — расширение
+{id:'prune',name:'Чернослив',type:'fruit',month:8,week:17,target:80,emoji:'🫐'},
+{id:'peach',name:'Персик',type:'fruit',month:8,week:18,target:80,emoji:'🍑'},
+{id:'apricot',name:'Абрикос',type:'fruit',month:8,week:19,target:80,emoji:'🟠'},
+{id:'plum',name:'Слива',type:'fruit',month:8,week:20,target:80,emoji:'🟣'},
+{id:'egg_yolk',name:'Перепелиный желток',type:'egg',month:8,week:21,target:0.5,emoji:'🥚',unit:'шт',freq:'2-3 р/нед'},
+{id:'carrot',name:'Морковь',type:'vegetable',month:8,week:22,target:150,emoji:'🥕',freq:'2-3 р/нед'},
+{id:'string_bean',name:'Стручковая фасоль',type:'vegetable',month:8,week:23,target:150,emoji:'🫘'},
+{id:'oat',name:'Овсяная каша',type:'cereal',month:8,week:24,target:180,emoji:'🥣',note:'Содержит глютен!'},
+{id:'pork',name:'Свинина нежирная',type:'meat',month:8,week:25,target:70,emoji:'🥩'},
+// 9 месяцев — рыба, ягоды, новые овощи и каши
+{id:'fish',name:'Белая рыба (треска/хек)',type:'fish',month:9,week:26,target:60,emoji:'🐟',freq:'2 р/нед'},
+{id:'cabbage',name:'Белокочанная капуста',type:'vegetable',month:9,week:27,target:150,emoji:'🥬'},
+{id:'beetroot',name:'Свёкла',type:'vegetable',month:9,week:28,target:150,emoji:'🟤',note:'Яркоокрашенная, осторожно'},
+{id:'blueberry',name:'Черника',type:'fruit',month:9,week:29,target:50,emoji:'🫐'},
+{id:'blackcurrant',name:'Чёрная смородина',type:'fruit',month:9,week:30,target:50,emoji:'⚫'},
+{id:'wheat',name:'Пшеничная каша',type:'cereal',month:9,week:31,target:200,emoji:'🌾',note:'Содержит глютен!'},
+{id:'multigrain',name:'Многозерновая каша',type:'cereal',month:10,week:32,target:200,emoji:'🥣',note:'Только из уже введённых круп'},
+{id:'cookie',name:'Безмолочное печенье',type:'other',month:9,week:33,target:5,emoji:'🍪'},
+{id:'bread',name:'Хлеб безмолочный',type:'other',month:9,week:33,target:10,emoji:'🍞'},
+];
+
+const RAMP = [
+{day:1,label:'½ ч.л.',g:3},{day:2,label:'1 ч.л.',g:5},{day:3,label:'2 ч.л.',g:10},
+{day:4,label:'3 ч.л.',g:15},{day:5,label:'5 ч.л.',g:25},{day:6,label:'7 ч.л.',g:35},
+{day:7,label:'50 г',g:50},{day:8,label:'70 г',g:70},{day:9,label:'100 г',g:100},
+{day:10,label:'120 г',g:120},{day:11,label:'150 г',g:150}
+];
+
+const TYPE_LABELS = {vegetable:'Овощ',cereal:'Каша',meat:'Мясо',fruit:'Фрукт',egg:'Желток',fish:'Рыба',other:'Допы'};
+const TYPE_CLASS = {vegetable:'type-vegetable',cereal:'type-cereal',meat:'type-meat',fruit:'type-fruit',egg:'type-egg',fish:'type-fish',other:'type-other'};
+
+let state = loadState();
+let openPanels = new Set();
+
+function loadState(){
+try{
+// Version check: clear old state if from previous version with preChecked
+const ver=localStorage.getItem('prikorm_version');
+if(ver!=='4'){
+localStorage.removeItem('prikorm_state');
+localStorage.setItem('prikorm_version','4');
+}
+const s=localStorage.getItem('prikorm_state');
+if(s){
+const parsed=JSON.parse(s);
+PRODUCTS.forEach(p=>{if(!parsed[p.id])parsed[p.id]={status:'pending',days:[],notes:'',reaction:''}});
+return parsed;
+}
+}catch(e){}
+const s={};
+PRODUCTS.forEach(p=>{
+s[p.id]={status:'pending',days:[],notes:'',reaction:''};
+});
+return s;
+}
+
+function saveState(){localStorage.setItem('prikorm_state',JSON.stringify(state))}
+
+function switchTab(id,btn){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById('tab-'+id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+if(id==='stats')renderStats();
+if(id==='schedule')renderSchedule();
+}
+
+function cycleStatus(id){
+const s=state[id];
+if(s.status==='pending')s.status='done';
+else if(s.status==='done')s.status='reacted';
+else s.status='pending';
+saveState();
+// Update in-place
+const card=document.querySelector(`[data-pid="${id}"]`);
+if(card){
+const check=card.querySelector('.product-check');
+check.className='product-check '+s.status;
+updateProgress(card,id);
+}
+}
+
+function toggleDay(id,dayIdx){
+if(!state[id].days)state[id].days=[];
+state[id].days[dayIdx]=!state[id].days[dayIdx];
+saveState();
+// Update just the dot and progress, don't re-render
+const card=document.querySelector(`[data-pid="${id}"]`);
+if(card){
+const dots=card.querySelectorAll('.day-dot');
+if(dots[dayIdx]){
+dots[dayIdx].classList.toggle('filled',state[id].days[dayIdx]);
+}
+updateProgress(card,id);
+}
+}
+
+function updateProgress(card,id){
+const s=state[id];
+const daysCompleted=(s.days||[]).filter(Boolean).length;
+const pct=Math.min(100,Math.round(daysCompleted/11*100));
+const fill=card.querySelector('.progress-fill');
+if(fill){
+fill.style.width=pct+'%';
+fill.style.background=s.status==='reacted'?'var(--danger)':'var(--ok)';
+}
+const vol=card.querySelector('.volume-info');
+if(vol)vol.textContent=`День ${daysCompleted}/11 · ${pct}%`;
+}
+
+function toggleDetail(id){
+const el=document.getElementById('detail-'+id);
+el.classList.toggle('open');
+}
+
+function saveNote(id,val){state[id].notes=val;saveState()}
+
+function filterProducts(){
+const q=document.getElementById('search').value.toLowerCase();
+document.querySelectorAll('.product-card-wrap').forEach(el=>{
+const name=el.dataset.name.toLowerCase();
+el.classList.toggle('hidden',q&&!name.includes(q));
+});
+}
+
+function renderTracker(){
+const cont=document.getElementById('tracker-content');
+let html='';
+let curMonth=0;
+PRODUCTS.forEach(p=>{
+if(p.month!==curMonth){
+curMonth=p.month;
+html+=`<div class="month-header">${curMonth} месяцев</div>`;
+}
+const s=state[p.id]||{status:'pending',days:[],notes:''};
+const daysCompleted=(s.days||[]).filter(Boolean).length;
+const pct=Math.min(100,Math.round(daysCompleted/11*100));
+const statusClass=s.status;
+const unit=p.unit||'г';
+const targetLabel=p.target<1?p.target+' '+unit:p.target+' '+unit;
+
+html+=`<div class="card product-card-wrap" data-name="${p.name}" data-pid="${p.id}">
+<div class="product-row">
+<div class="product-check ${statusClass}" onclick="cycleStatus('${p.id}')" title="Нажмите для переключения"></div>
+<div class="product-info">
+<div class="product-name">${p.emoji} ${p.name}</div>
+<div class="product-meta">Нед. ${p.week} · Цель: ${targetLabel}${p.freq?' · '+p.freq:''}${p.note?' · ⚠️ '+p.note:''}</div>
+<span class="product-type ${TYPE_CLASS[p.type]}">${TYPE_LABELS[p.type]}</span>
+</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${s.status==='reacted'?'var(--danger)':'var(--ok)'}"></div></div>
+<div class="volume-info">День ${daysCompleted}/11 · ${pct}%</div>
+<button class="expand-btn" onclick="toggleDetail('${p.id}')">Подробнее ▾</button>
+<div class="detail-panel" id="detail-${p.id}">
+<div style="font-size:12px;font-weight:700;margin-bottom:6px">Отметьте дни введения:</div>
+<div class="day-tracker">
+${RAMP.map((r,i)=>{
+const filled=(s.days||[])[i];
+return `<div class="day-dot ${filled?'filled':''}" onclick="toggleDay('${p.id}',${i})" title="День ${r.day}: ${r.label}">${r.day}</div>`;
+}).join('')}
+</div>
+<div style="margin-top:8px">
+${RAMP.map((r,i)=>`<div class="detail-row"><span>День ${r.day}</span><span>${r.label} (${r.g} г)</span></div>`).join('')}
+</div>
+<textarea class="note-input" rows="2" placeholder="Заметки (реакции, стул, кожа...)" 
+oninput="saveNote('${p.id}',this.value)">${s.notes||''}</textarea>
+</div>
+</div>`;
+});
+cont.innerHTML=html;
+}
+
+function renderSchedule(){
+const cont=document.getElementById('schedule-content');
+const meals={
+5:{title:'5 месяцев — 1 приём прикорма',rows:[
+'06:00 — Лечебная смесь','10:00 — Овощи + докорм смесью','14:00 — Лечебная смесь','18:00 — Лечебная смесь','22:00 — Лечебная смесь'
+]},
+6:{title:'6 месяцев — 2 приёма прикорма',rows:[
+'06:00 — Лечебная смесь','10:00 — Каша + масло','14:00 — Овощи + мясо + масло','18:00 — Лечебная смесь','22:00 — Лечебная смесь'
+]},
+7:{title:'7 месяцев — 3 приёма',rows:[
+'06:00 — Лечебная смесь','10:00 — Каша + масло + ¼ желтка','14:00 — Овощи + мясо + масло','18:00 — Фрукты + смесь','22:00 — Лечебная смесь'
+]},
+8:{title:'8–9 месяцев — 3 приёма',rows:[
+'06:00 — Лечебная смесь','10:00 — Каша 180 г + масло + ½ желтка','14:00 — Овощи 150 г + мясо/рыба 60–70 г','18:00 — Фрукты 80 г + печенье + смесь','22:00 — Лечебная смесь'
+]},
+10:{title:'10–12 месяцев — 4 приёма',rows:[
+'06:00 — Лечебная смесь','10:00 — Каша 200 г + масло + ½ желтка + фрукт','14:00 — Овощи 150 г + мясо/рыба 80–100 г + хлеб','18:00 — Фрукты 100 г + печенье/каша + смесь','22:00 — Лечебная смесь'
+]}
+};
+let html='<div class="section-title"><span>🕐</span> Режим кормлений по месяцам</div>';
+Object.entries(meals).forEach(([m,data])=>{
+html+=`<div class="month-header">${data.title}</div><div class="card" style="font-size:13px;line-height:2">`;
+data.rows.forEach(r=>{
+const bold=r.includes('Прикорм')||r.includes('Каша')||r.includes('Овощи')||r.includes('Фрукты');
+html+=`<div${bold?' style="font-weight:700;color:var(--accent)"':''}>${r}</div>`;
+});
+html+='</div>';
+});
+cont.innerHTML=html;
+}
+
+function renderStats(){
+const total=PRODUCTS.length;
+const done=PRODUCTS.filter(p=>(state[p.id]||{}).status==='done').length;
+const reacted=PRODUCTS.filter(p=>(state[p.id]||{}).status==='reacted').length;
+const pending=total-done-reacted;
+document.getElementById('stats-grid').innerHTML=`
+<div class="stat-card"><div class="stat-num" style="color:var(--ok)">${done}</div><div class="stat-label">Введено ✓</div></div>
+<div class="stat-card"><div class="stat-num" style="color:var(--danger)">${reacted}</div><div class="stat-label">Реакция ✕</div></div>
+<div class="stat-card"><div class="stat-num" style="color:var(--accent)">${pending}</div><div class="stat-label">Осталось</div></div>
+<div class="stat-card"><div class="stat-num" style="color:var(--accent3)">${total}</div><div class="stat-label">Всего</div></div>`;
+}
+
+function resetAll(){
+if(confirm('Точно сбросить весь прогресс? Это действие нельзя отменить.')){
+localStorage.removeItem('prikorm_state');
+state=loadState();
+PRODUCTS.forEach(p=>{state[p.id]={status:'pending',days:[],notes:'',reaction:''}});
+saveState();renderTracker();renderStats();
+alert('Прогресс сброшен');
+}
+}
+
+renderTracker();
+</script>
+</body>
+</html>

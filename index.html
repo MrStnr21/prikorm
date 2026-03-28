@@ -54,7 +54,8 @@ nav button.active{color:var(--accent);border-top:2px solid var(--accent)}
 .search{width:100%;padding:8px 12px;border:2px solid #f0d8d5;border-radius:10px;font-family:inherit;font-size:13px;margin-bottom:10px;background:#fff;outline:none}
 .search:focus{border-color:var(--accent)}
 /* Day plan cards */
-.dcard{background:var(--card);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:10px}
+.dcard{background:var(--card);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:10px;max-height:200px;transition:opacity .5s ease,transform .5s ease,max-height .4s ease .3s,margin-bottom .4s ease .3s,padding .4s ease .3s}
+.dcard.bye{opacity:0;transform:translateX(50px) scale(.96);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0;overflow:hidden}
 .dchk{width:22px;height:22px;border-radius:6px;border:2px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
 .dchk.done{background:var(--ok);border-color:var(--ok)}
 .dchk.done::after{content:'✓';color:#fff;font-weight:800;font-size:11px}
@@ -183,7 +184,7 @@ pool[p.t].push(p);
 let pState=loadPS();
 let dState=loadDS();
 
-function loadPS(){try{const v=localStorage.getItem('_v');if(v!=='21'){localStorage.removeItem('_ps');localStorage.removeItem('_ds');localStorage.setItem('_v','21')}const s=localStorage.getItem('_ps');if(s){const r=JSON.parse(s);P.forEach(p=>{if(!r[p.id])r[p.id]={s:'pending',days:[],notes:''}});return r}}catch(e){}const r={};P.forEach(p=>{r[p.id]={s:'pending',days:[],notes:''}});return r}
+function loadPS(){try{const v=localStorage.getItem('_v');if(v!=='22'){localStorage.removeItem('_ps');localStorage.removeItem('_ds');localStorage.setItem('_v','22')}const s=localStorage.getItem('_ps');if(s){const r=JSON.parse(s);P.forEach(p=>{if(!r[p.id])r[p.id]={s:'pending',days:[],notes:''}});return r}}catch(e){}const r={};P.forEach(p=>{r[p.id]={s:'pending',days:[],notes:''}});return r}
 function loadDS(){try{const s=localStorage.getItem('_ds');if(s)return JSON.parse(s)}catch(e){}return new Array(DAYS.length).fill(false)}
 function savePS(){localStorage.setItem('_ps',JSON.stringify(pState))}
 function saveDS(){localStorage.setItem('_ds',JSON.stringify(dState))}
@@ -229,12 +230,28 @@ c.innerHTML=h;
 }
 
 // Day plan
-function togPlan(i){dState[i]=!dState[i];saveDS();renderPlan()}
+function togPlan(i){
+const card=document.querySelector(`.dcard[data-idx="${i}"]`);
+if(!dState[i]){
+dState[i]=true;saveDS();
+// Update counter immediately
+const dc=dState.filter(Boolean).length;
+document.getElementById('plan-cnt').innerHTML=`Осталось: <b>${DAYS.length-dc}</b> из ${DAYS.length}`;
+if(card){
+const chk=card.querySelector('.dchk');
+chk.classList.add('done');
+setTimeout(()=>card.classList.add('bye'),250);
+setTimeout(()=>{renderPlan()},1000);
+}else{renderPlan()}
+}else{
+dState[i]=false;saveDS();renderPlan();
+}
+}
 function renderPlan(){
 let todoH='',doneH='',dc=0;
 DAYS.forEach((d,i)=>{
 const ok=dState[i];if(ok)dc++;
-const html=`<div class="dcard"><div class="dchk ${ok?'done':''}" onclick="togPlan(${i})"></div><div style="flex:1;min-width:0"><div class="dnum">День ${d.day}</div><div class="dnew">🆕 ${d.newLine}</div>${d.ctx?`<div class="dctx">+ ${d.ctx}</div>`:''}</div></div>`;
+const html=`<div class="dcard" data-idx="${i}"><div class="dchk ${ok?'done':''}" onclick="togPlan(${i})"></div><div style="flex:1;min-width:0"><div class="dnum">День ${d.day}</div><div class="dnew">🆕 ${d.newLine}</div>${d.ctx?`<div class="dctx">+ ${d.ctx}</div>`:''}</div></div>`;
 if(ok)doneH+=html;else todoH+=html;
 });
 document.getElementById('plan-cnt').innerHTML=`Осталось: <b>${DAYS.length-dc}</b> из ${DAYS.length}`;

@@ -46,7 +46,7 @@ nav button.active{color:var(--accent);border-top:2px solid var(--accent)}
 .expand{background:none;border:none;color:var(--accent);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 0;margin-top:4px}
 .detail{display:none;margin-top:6px;padding:8px;background:#fef0ed;border-radius:10px}
 .detail.open{display:block}
-.dtrack{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px}
+.dtrack{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:6px}
 .ddot{width:100%;aspect-ratio:1;border-radius:5px;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s}
 .ddot.filled{background:var(--ok);border-color:var(--ok);color:#fff}
 .drow{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
@@ -115,20 +115,20 @@ const P=[
 {id:'pasta',n:'Макароны',e:'🍝',t:'o',tg:50},
 ];
 
-const RAMP=[{d:1,l:'1 ч.л.',g:5},{d:2,l:'2 ч.л.',g:10},{d:3,l:'4 ч.л.',g:20},{d:4,l:'8 ч.л.',g:40},{d:5,l:'80 г',g:80},{d:6,l:'120 г',g:120},{d:7,l:'150 г',g:150}];
-const RD=7;
+const RAMP=[{d:1,l:'1 ч.л.',g:5},{d:2,l:'2 ч.л.',g:10},{d:3,l:'5 ч.л.',g:25},{d:4,l:'50 г',g:50},{d:5,l:'150 г',g:150}];
+const RD=5;
 const TL={v:'Овощ',c:'Каша',m:'Мясо',f:'Фрукт',y:'Желток',fi:'Рыба',d:'Молочное',k:'Молочное',o:'Допы'};
 const TC={v:'tv',c:'tc',m:'tm',f:'tf',y:'te',fi:'tfi',d:'td',k:'td',o:'to'};
 
-// Ramp arrays per type
-const vL=['1 ч.л.','2 ч.л.','4 ч.л.','8 ч.л.','80 г','120 г','150 г'];
-const mL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','30 г','40 г','50 г'];
-const fL=['1 ч.л.','2 ч.л.','4 ч.л.','6 ч.л.','40 г','50 г','70 г'];
-const yL=['крошка','⅛ шт','¼ шт','¼ шт','¼ шт','¼ шт','½ шт'];
-const dL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','25 г','30 г','40 г'];
-const kL=['30 мл','50 мл','70 мл','100 мл','130 мл','170 мл','200 мл'];
-const fiL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','30 г','40 г','60 г'];
-const vR=[5,10,20,40,80,120,150];
+// Ramp arrays per type (5 days)
+const vL=['1 ч.л.','2 ч.л.','5 ч.л.','50 г','150 г'];
+const mL=['1 ч.л.','2 ч.л.','4 ч.л.','30 г','50 г'];
+const fL=['1 ч.л.','2 ч.л.','4 ч.л.','40 г','70 г'];
+const yL=['крошка','⅛ шт','¼ шт','¼ шт','½ шт'];
+const dL=['1 ч.л.','2 ч.л.','4 ч.л.','25 г','40 г'];
+const kL=['30 мл','50 мл','100 мл','150 мл','200 мл'];
+const fiL=['1 ч.л.','2 ч.л.','4 ч.л.','30 г','60 г'];
+const vR=[5,10,25,50,150];
 
 // Generate day plan
 const DAYS=[];
@@ -137,7 +137,7 @@ let day=1;
 const pool={v:[],c:[],m:[],f:[],y:[],d:[],k:[],fi:[],o:[]};
 P.forEach(p=>{
 const rL=p.t==='m'?mL:p.t==='f'?fL:p.t==='y'?yL:p.t==='d'?dL:p.t==='k'?kL:p.t==='fi'?fiL:vL;
-for(let d=0;d<7;d++){
+for(let d=0;d<5;d++){
 const em=p.e+' '+p.n;
 let text=em+' — '+rL[d];
 const ctx=[];
@@ -183,7 +183,7 @@ pool[p.t].push(p);
 let pState=loadPS();
 let dState=loadDS();
 
-function loadPS(){try{const v=localStorage.getItem('_v');if(v!=='20'){localStorage.removeItem('_ps');localStorage.removeItem('_ds');localStorage.setItem('_v','20')}const s=localStorage.getItem('_ps');if(s){const r=JSON.parse(s);P.forEach(p=>{if(!r[p.id])r[p.id]={s:'pending',days:[],notes:''}});return r}}catch(e){}const r={};P.forEach(p=>{r[p.id]={s:'pending',days:[],notes:''}});return r}
+function loadPS(){try{const v=localStorage.getItem('_v');if(v!=='21'){localStorage.removeItem('_ps');localStorage.removeItem('_ds');localStorage.setItem('_v','21')}const s=localStorage.getItem('_ps');if(s){const r=JSON.parse(s);P.forEach(p=>{if(!r[p.id])r[p.id]={s:'pending',days:[],notes:''}});return r}}catch(e){}const r={};P.forEach(p=>{r[p.id]={s:'pending',days:[],notes:''}});return r}
 function loadDS(){try{const s=localStorage.getItem('_ds');if(s)return JSON.parse(s)}catch(e){}return new Array(DAYS.length).fill(false)}
 function savePS(){localStorage.setItem('_ps',JSON.stringify(pState))}
 function saveDS(){localStorage.setItem('_ds',JSON.stringify(dState))}

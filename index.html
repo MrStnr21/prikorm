@@ -7,469 +7,244 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Прикорм">
 <meta name="theme-color" content="#e8878c">
-<title>Прикорм при АБКМ</title>
+<title>Прикорм малыша</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
---bg:#fef6f3;--card:#fff;--text:#3d2c2c;--muted:#a08888;
---accent:#e8878c;--accent2:#b8d4c8;--accent3:#d4707a;
---danger:#e63946;--warn:#f4a261;--ok:#81b29a;
---shadow:0 2px 12px rgba(180,120,120,.1);
---radius:16px;
---table-alt:#fef0ed;--table-head:#fce4e0;
-}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
-padding:0;min-height:100vh;padding-bottom:80px;-webkit-tap-highlight-color:transparent}
-.container{max-width:480px;margin:0 auto;padding:16px}
-header{background:linear-gradient(135deg,#e8878c,#d4707a);color:#fff;
-padding:env(safe-area-inset-top,20px) 20px 20px;text-align:center;position:sticky;top:0;z-index:100}
-header h1{font-size:22px;font-weight:800;letter-spacing:-.5px}
-header p{font-size:12px;opacity:.7;margin-top:4px}
-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;
-border-top:1px solid #f0d8d5;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
-nav button{flex:1;padding:10px 4px 8px;border:none;background:none;font-family:inherit;
-font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-nav button.active{color:var(--accent)}
-nav button svg{width:22px;height:22px}
-.tab{display:none}
-.tab.active{display:block}
-.section-title{font-size:15px;font-weight:800;color:var(--accent3);margin:20px 0 10px;
-display:flex;align-items:center;gap:8px}
-.section-title span{font-size:18px}
-.card{background:var(--card);border-radius:var(--radius);padding:14px 16px;
-margin-bottom:10px;box-shadow:var(--shadow)}
-.product-row{display:flex;align-items:center;gap:10px;padding:10px 0;
-border-bottom:1px solid #f5e0dd}
-.product-row:last-child{border:none}
-.product-check{width:26px;height:26px;border-radius:8px;border:2px solid #ddd;
-background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
-flex-shrink:0;transition:all .2s}
-.product-check.done{background:var(--ok);border-color:var(--ok)}
-.product-check.done::after{content:'✓';color:#fff;font-weight:800;font-size:14px}
-.product-check.reacted{background:var(--danger);border-color:var(--danger)}
-.product-check.reacted::after{content:'✕';color:#fff;font-weight:800;font-size:14px}
-.product-info{flex:1;min-width:0}
-.product-name{font-weight:700;font-size:14px}
-.product-meta{font-size:11px;color:var(--muted);margin-top:2px}
-.product-type{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;
-display:inline-block;margin-top:4px}
-.type-vegetable{background:#e8f5e9;color:#2e7d32}
-.type-cereal{background:#fff3e0;color:#e65100}
-.type-meat{background:#fce4ec;color:#c62828}
-.type-fruit{background:#f3e5f5;color:#7b1fa2}
-.type-egg{background:#fff9c4;color:#f57f17}
-.type-fish{background:#e0f7fa;color:#00838f}
-.type-other{background:#f5f5f5;color:#616161}
-.product-actions{display:flex;gap:6px;flex-shrink:0}
-.btn-sm{width:32px;height:32px;border-radius:8px;border:none;font-size:14px;
-cursor:pointer;display:flex;align-items:center;justify-content:center}
-.btn-ok{background:#e8f5e9;color:#2e7d32}
-.btn-warn{background:#fff3e0;color:#e65100}
-.btn-danger{background:#fce4ec;color:#c62828}
-.progress-bar{height:6px;background:#eee;border-radius:3px;margin-top:8px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;transition:width .3s}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat-card{background:var(--card);border-radius:var(--radius);padding:16px;
-text-align:center;box-shadow:var(--shadow)}
-.stat-num{font-size:28px;font-weight:800;color:var(--accent)}
-.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
-.banned-item{display:flex;align-items:center;gap:8px;padding:8px 0;
-border-bottom:1px solid #f5e0dd;font-size:13px}
-.banned-item:last-child{border:none}
-.banned-icon{font-size:16px}
-.day-tracker{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
-.day-dot{width:100%;aspect-ratio:1;border-radius:6px;border:2px solid #eee;
-display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
-color:var(--muted);cursor:pointer;transition:all .2s}
-.day-dot.filled{background:var(--ok);border-color:var(--ok);color:#fff}
-.day-dot.today{border-color:var(--accent)}
-.volume-info{font-size:12px;color:var(--accent);font-weight:700;margin-top:6px}
-.expand-btn{background:none;border:none;color:var(--accent);font-family:inherit;
-font-size:13px;font-weight:700;cursor:pointer;padding:4px 0;margin-top:6px}
-.detail-panel{display:none;margin-top:8px;padding:10px;background:#fef0ed;border-radius:12px}
-.detail-panel.open{display:block}
-.detail-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
-.note-input{width:100%;border:1px solid #f0d8d5;border-radius:8px;padding:8px 10px;
-font-family:inherit;font-size:12px;margin-top:6px;resize:none;background:#fff}
-.reset-btn{background:var(--danger);color:#fff;border:none;border-radius:12px;
-padding:12px 20px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
-width:100%;margin-top:20px}
-.info-block{background:#fef0ed;border-left:3px solid var(--accent);padding:12px;
-border-radius:0 12px 12px 0;margin-bottom:12px;font-size:12px;line-height:1.5}
-.info-block b{color:var(--accent3)}
-.month-header{font-size:13px;font-weight:800;color:#fff;background:var(--accent);
-padding:6px 12px;border-radius:10px;margin:16px 0 8px;display:inline-block}
-.search-bar{width:100%;padding:10px 14px;border:2px solid #f0d8d5;border-radius:12px;
-font-family:inherit;font-size:14px;margin-bottom:12px;background:#fff;outline:none}
-.search-bar:focus{border-color:var(--accent)}
-.hidden{display:none!important}
+:root{--bg:#fef6f3;--card:#fff;--text:#3d2c2c;--muted:#a08888;--accent:#e8878c;--accent3:#d4707a;--ok:#81b29a;--danger:#e63946;--shadow:0 2px 12px rgba(180,120,120,.1);--radius:14px}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);padding:0;min-height:100vh;padding-bottom:70px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:480px;margin:0 auto;padding:12px}
+header{background:linear-gradient(135deg,#e8878c,#d4707a);color:#fff;padding:env(safe-area-inset-top,16px) 16px 14px;text-align:center;position:sticky;top:0;z-index:100}
+header h1{font-size:20px;font-weight:800}
+header p{font-size:11px;opacity:.7;margin-top:2px}
+/* Bottom nav */
+nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0d8d5;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;padding:12px 4px 10px;border:none;background:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+nav button.active{color:var(--accent);border-top:2px solid var(--accent)}
+.tab{display:none}.tab.active{display:block}
+/* Sub tabs inside plan */
+.sub-nav{display:flex;gap:0;margin-bottom:12px;border-radius:10px;overflow:hidden;border:2px solid #f0d8d5}
+.sub-nav button{flex:1;padding:8px;border:none;background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+.sub-nav button.active{background:var(--accent);color:#fff}
+.sub-tab{display:none}.sub-tab.active{display:block}
+/* Product tracker cards */
+.card{background:var(--card);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow)}
+.product-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+.pcheck{width:26px;height:26px;border-radius:8px;border:2px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.pcheck.done{background:var(--ok);border-color:var(--ok)}
+.pcheck.done::after{content:'✓';color:#fff;font-weight:800;font-size:14px}
+.pcheck.reacted{background:var(--danger);border-color:var(--danger)}
+.pcheck.reacted::after{content:'✕';color:#fff;font-weight:800;font-size:14px}
+.pname{font-weight:700;font-size:14px}
+.pmeta{font-size:11px;color:var(--muted);margin-top:2px}
+.ptype{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;display:inline-block;margin-top:3px}
+.tv{background:#e8f5e9;color:#2e7d32}.tc{background:#fff3e0;color:#e65100}.tm{background:#fce4ec;color:#c62828}.tf{background:#f3e5f5;color:#7b1fa2}.te{background:#fff9c4;color:#f57f17}.tfi{background:#e0f7fa;color:#00838f}.td{background:#fce4ec;color:#ad1457}.to{background:#f5f5f5;color:#616161}
+.pbar{height:5px;background:#eee;border-radius:3px;margin-top:6px;overflow:hidden}
+.pfill{height:100%;border-radius:3px;transition:width .3s}
+.pvol{font-size:11px;color:var(--accent);font-weight:700;margin-top:4px}
+.expand{background:none;border:none;color:var(--accent);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 0;margin-top:4px}
+.detail{display:none;margin-top:6px;padding:8px;background:#fef0ed;border-radius:10px}
+.detail.open{display:block}
+.dtrack{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px}
+.ddot{width:100%;aspect-ratio:1;border-radius:5px;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s}
+.ddot.filled{background:var(--ok);border-color:var(--ok);color:#fff}
+.drow{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.note{width:100%;border:1px solid #f0d8d5;border-radius:6px;padding:6px 8px;font-family:inherit;font-size:11px;margin-top:6px;resize:none;background:#fff}
+.search{width:100%;padding:8px 12px;border:2px solid #f0d8d5;border-radius:10px;font-family:inherit;font-size:13px;margin-bottom:10px;background:#fff;outline:none}
+.search:focus{border-color:var(--accent)}
+/* Day plan cards */
+.dcard{background:var(--card);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:10px}
+.dchk{width:22px;height:22px;border-radius:6px;border:2px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.dchk.done{background:var(--ok);border-color:var(--ok)}
+.dchk.done::after{content:'✓';color:#fff;font-weight:800;font-size:11px}
+.dnum{font-weight:800;color:var(--accent3);font-size:13px;margin-bottom:3px}
+.dnew{font-weight:700;color:var(--accent);font-size:13px}
+.dctx{font-size:11px;color:var(--muted);margin-top:2px}
+.cnt{text-align:center;padding:8px;font-size:12px;color:var(--muted);font-weight:700}
+.cnt b{color:var(--accent3);font-size:16px}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.reset{background:var(--danger);color:#fff;border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:16px}
 @media(prefers-color-scheme:dark){
-:root{--bg:#2a1f2d;--card:#362a38;--text:#f0e4e6;--muted:#a08888;
---shadow:0 2px 12px rgba(0,0,0,.3);--table-alt:#3d2f3f;--table-head:#4a3a4c}
-nav{background:#362a38;border-color:#4a3a4c}
-.search-bar{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}
-.detail-panel{background:#3d2f3f}
-.note-input{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}
-.info-block{background:#3d2f3f}
-header{background:linear-gradient(135deg,#8c4a5a,#6e3648)}
-.product-row{border-bottom-color:#4a3a4c}
-.product-check{background:#3d2f3f;border-color:#5a4a5c}
-.day-dot{border-color:#5a4a5c;color:var(--muted)}
-.progress-bar{background:#4a3a4c}
+:root{--bg:#2a1f2d;--card:#362a38;--text:#f0e4e6;--muted:#a08888;--shadow:0 2px 12px rgba(0,0,0,.3)}
+nav{background:#362a38;border-color:#4a3a4c}header{background:linear-gradient(135deg,#8c4a5a,#6e3648)}.pcheck,.dchk{background:#3d2f3f;border-color:#5a4a5c}.detail{background:#3d2f3f}.note{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}.search{background:#3d2f3f;border-color:#4a3a4c;color:#f0e4e6}.sub-nav{border-color:#4a3a4c}.sub-nav button{background:#362a38;color:var(--muted)}.sub-nav button.active{background:var(--accent);color:#fff}.ddot{border-color:#5a4a5c}.pbar{background:#4a3a4c}
 }
 </style>
 </head>
 <body>
-
-<header>
-<h1>🍼 Прикорм при АБКМ</h1>
-<p>Трекер введения продуктов</p>
-</header>
-
-<div class="container">
-<!-- TAB: Tracker -->
-<div class="tab active" id="tab-tracker">
-<input class="search-bar" type="text" placeholder="🔍 Найти продукт..." id="search" oninput="filterProducts()">
-<div id="tracker-content"></div>
+<header><h1>🍼 Прикорм малыша</h1><p>Трекер и план введения продуктов</p></header>
+<div class="wrap">
+<!-- TAB: Products -->
+<div class="tab active" id="tab-prod">
+<input class="search" type="text" placeholder="🔍 Найти продукт..." id="srch" oninput="filterP()">
+<div id="prod-list"></div>
+<button class="reset" onclick="resetAll()">Сбросить всё</button>
 </div>
-
-<!-- TAB: Schedule -->
-<div class="tab" id="tab-schedule">
-<div id="schedule-content"></div>
+<!-- TAB: Plan -->
+<div class="tab" id="tab-plan">
+<div class="sub-nav">
+<button class="active" onclick="subSw('todo',this)">Ввести</button>
+<button onclick="subSw('done',this)">Введено ✓</button>
 </div>
-
-<!-- TAB: Banned -->
-<div class="tab" id="tab-banned">
-<div class="section-title"><span>🚫</span> Запрещено при АБКМ</div>
-<div class="card">
-<div class="banned-item"><span class="banned-icon">🥛</span>Молоко (коровье, козье, овечье)</div>
-<div class="banned-item"><span class="banned-icon">🧈</span>Сливочное масло</div>
-<div class="banned-item"><span class="banned-icon">🧀</span>Сыр, творог, сметана</div>
-<div class="banned-item"><span class="banned-icon">🥛</span>Кефир, йогурт, ряженка</div>
-<div class="banned-item"><span class="banned-icon">🥩</span>Говядина, телятина</div>
-<div class="banned-item"><span class="banned-icon">🍼</span>Молочные каши</div>
-<div class="banned-item"><span class="banned-icon">🍪</span>Печенье/хлеб с молоком в составе</div>
-<div class="banned-item"><span class="banned-icon">🐐</span>Смеси на козьем молоке</div>
-<div class="banned-item"><span class="banned-icon">⚠️</span>ГА-смеси (частичный гидролиз)</div>
-</div>
-<div class="info-block">
-<b>Читайте этикетки!</b> Искать в составе: молоко, казеин, казеинат, сыворотка, лактальбумин, лактоглобулин, молочный жир. Маркировка «может содержать следы молока» — тоже стоп.
-</div>
-<div class="section-title"><span>⚡</span> Перекрёстная аллергия</div>
-<div class="card">
-<div class="banned-item"><span class="banned-icon">🐐</span>Козье молоко — реакция >90%</div>
-<div class="banned-item"><span class="banned-icon">🐄</span>Говядина — реакция 10–20%</div>
-<div class="banned-item"><span class="banned-icon">🫘</span>Соя (не-IgE) — реакция до 50–60%</div>
-<div class="banned-item"><span class="banned-icon">🥚</span>Яйцо — возможна перекрёстная</div>
-</div>
-<div class="section-title"><span>✅</span> Безопасные замены</div>
-<div class="card">
-<div class="banned-item"><span class="banned-icon">🫒</span>Растительное масло вместо сливочного</div>
-<div class="banned-item"><span class="banned-icon">🐇</span>Кролик, индейка, свинина вместо говядины</div>
-<div class="banned-item"><span class="banned-icon">🥣</span>Безмолочные каши на воде или смеси</div>
-<div class="banned-item"><span class="banned-icon">💊</span>Лечебная смесь — основа рациона до 12+ мес.</div>
+<div class="cnt" id="plan-cnt"></div>
+<div class="sub-tab active" id="sub-todo"><div id="todo-list"></div></div>
+<div class="sub-tab" id="sub-done"><div id="done-list"></div></div>
 </div>
 </div>
-
-<!-- TAB: Stats -->
-<div class="tab" id="tab-stats">
-<div class="stats-grid" id="stats-grid"></div>
-<div class="section-title"><span>📋</span> Правила введения</div>
-<div class="card" style="font-size:13px;line-height:1.6">
-<p>🕐 Новый продукт — <b>утром (9–11:00)</b></p>
-<p>📅 Один новый продукт за <b>7–14 дней</b></p>
-<p>📈 Наращивание: ½ ч.л. → удвоение → 150 г</p>
-<p>👀 При реакции — убрать, повтор через <b>1–2 мес.</b></p>
-<p>🚫 Не вводить при болезни, прививках, зубах</p>
-<p>📝 Записывать: кожу, стул, поведение, сон</p>
-</div>
-<div class="section-title"><span>📏</span> Объёмы по возрастам</div>
-<div class="card" style="font-size:12px;overflow-x:auto">
-<table style="width:100%;border-collapse:collapse;text-align:center;color:var(--text)">
-<tr style="background:var(--table-head);font-weight:700"><td style="text-align:left;padding:6px">Продукт</td><td style="padding:6px">5м</td><td>6м</td><td>7м</td><td>8м</td><td>9-12м</td></tr>
-<tr><td style="text-align:left;padding:4px">Овощи, г</td><td>150</td><td>150</td><td>150</td><td>150</td><td>150</td></tr>
-<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Каша, г</td><td>150</td><td>150</td><td>150</td><td>180</td><td>200</td></tr>
-<tr><td style="text-align:left;padding:4px">Мясо, г</td><td>—</td><td>30</td><td>50</td><td>70</td><td>80-100</td></tr>
-<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Фрукты, г</td><td>—</td><td>60</td><td>70</td><td>80</td><td>100</td></tr>
-<tr><td style="text-align:left;padding:4px">Желток</td><td>—</td><td>—</td><td>¼</td><td>½</td><td>½</td></tr>
-<tr style="background:var(--table-alt)"><td style="text-align:left;padding:4px">Рыба, г</td><td>—</td><td>—</td><td>—</td><td>30</td><td>30-60</td></tr>
-<tr><td style="text-align:left;padding:4px">Масло, мл</td><td>3</td><td>5</td><td>5</td><td>6</td><td>6</td></tr>
-</table>
-</div>
-<div class="section-title"><span>🔄</span> Сбросить все данные</div>
-<button class="reset-btn" onclick="resetAll()">Сбросить прогресс</button>
-</div>
-</div>
-
 <nav>
-<button class="active" onclick="switchTab('tracker',this)">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-Трекер
-</button>
-<button onclick="switchTab('schedule',this)">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-План
-</button>
-<button onclick="switchTab('banned',this)">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-Запрещено
-</button>
-<button onclick="switchTab('stats',this)">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-Инфо
-</button>
+<button class="active" onclick="mainSw('prod',this)">Продукты</button>
+<button onclick="mainSw('plan',this)">План</button>
 </nav>
-
 <script>
-const PRODUCTS = [
-// 5 месяцев — старт с овощей
-{id:'zucchini',name:'Кабачок',type:'vegetable',month:5,week:1,target:150,emoji:'🥒'},
-{id:'cauliflower',name:'Цветная капуста',type:'vegetable',month:5,week:2,target:150,emoji:'🥦'},
-{id:'broccoli',name:'Брокколи',type:'vegetable',month:5,week:3,target:150,emoji:'🥦'},
-{id:'pumpkin',name:'Тыква (светлая)',type:'vegetable',month:5,week:4,target:150,emoji:'🎃'},
-{id:'patisson',name:'Патиссон',type:'vegetable',month:5,week:5,target:150,emoji:'🫛'},
-// 6 месяцев — каши + овощи
-{id:'buckwheat',name:'Гречневая каша',type:'cereal',month:6,week:6,target:150,emoji:'🥣'},
-{id:'rice',name:'Рисовая каша',type:'cereal',month:6,week:7,target:150,emoji:'🍚'},
-{id:'corn',name:'Кукурузная каша',type:'cereal',month:6,week:8,target:150,emoji:'🌽'},
-{id:'potato',name:'Картофель',type:'vegetable',month:6,week:9,target:150,emoji:'🥔'},
-// 7 месяцев — мясо + фрукты
-{id:'rabbit',name:'Кролик',type:'meat',month:7,week:10,target:50,emoji:'🐇'},
-{id:'turkey',name:'Индейка',type:'meat',month:7,week:11,target:50,emoji:'🦃'},
-{id:'horse',name:'Конина',type:'meat',month:7,week:12,target:50,emoji:'🐴'},
-{id:'apple',name:'Яблоко зелёное',type:'fruit',month:7,week:13,target:70,emoji:'🍏'},
-{id:'pear',name:'Груша',type:'fruit',month:7,week:14,target:70,emoji:'🍐'},
-{id:'banana',name:'Банан',type:'fruit',month:7,week:15,target:70,emoji:'🍌'},
-{id:'green_peas',name:'Зелёный горошек',type:'vegetable',month:7,week:16,target:150,emoji:'🟢'},
-// 8 месяцев — расширение
-{id:'prune',name:'Чернослив',type:'fruit',month:8,week:17,target:80,emoji:'🫐'},
-{id:'peach',name:'Персик',type:'fruit',month:8,week:18,target:80,emoji:'🍑'},
-{id:'apricot',name:'Абрикос',type:'fruit',month:8,week:19,target:80,emoji:'🟠'},
-{id:'plum',name:'Слива',type:'fruit',month:8,week:20,target:80,emoji:'🟣'},
-{id:'egg_yolk',name:'Перепелиный желток',type:'egg',month:8,week:21,target:0.5,emoji:'🥚',unit:'шт',freq:'2-3 р/нед'},
-{id:'carrot',name:'Морковь',type:'vegetable',month:8,week:22,target:150,emoji:'🥕',freq:'2-3 р/нед'},
-{id:'string_bean',name:'Стручковая фасоль',type:'vegetable',month:8,week:23,target:150,emoji:'🫘'},
-{id:'oat',name:'Овсяная каша',type:'cereal',month:8,week:24,target:180,emoji:'🥣',note:'Содержит глютен!'},
-{id:'pork',name:'Свинина нежирная',type:'meat',month:8,week:25,target:70,emoji:'🥩'},
-// 9 месяцев — рыба, ягоды, новые овощи и каши
-{id:'fish',name:'Белая рыба (треска/хек)',type:'fish',month:9,week:26,target:60,emoji:'🐟',freq:'2 р/нед'},
-{id:'cabbage',name:'Белокочанная капуста',type:'vegetable',month:9,week:27,target:150,emoji:'🥬'},
-{id:'beetroot',name:'Свёкла',type:'vegetable',month:9,week:28,target:150,emoji:'🟤',note:'Яркоокрашенная, осторожно'},
-{id:'blueberry',name:'Черника',type:'fruit',month:9,week:29,target:50,emoji:'🫐'},
-{id:'blackcurrant',name:'Чёрная смородина',type:'fruit',month:9,week:30,target:50,emoji:'⚫'},
-{id:'wheat',name:'Пшеничная каша',type:'cereal',month:9,week:31,target:200,emoji:'🌾',note:'Содержит глютен!'},
-{id:'multigrain',name:'Многозерновая каша',type:'cereal',month:10,week:32,target:200,emoji:'🥣',note:'Только из уже введённых круп'},
-{id:'cookie',name:'Безмолочное печенье',type:'other',month:9,week:33,target:5,emoji:'🍪'},
-{id:'bread',name:'Хлеб безмолочный',type:'other',month:9,week:33,target:10,emoji:'🍞'},
+const P=[
+{id:'zucchini',n:'Кабачок',e:'🥒',t:'v',tg:150},{id:'cauliflower',n:'Цветная капуста',e:'🥦',t:'v',tg:150},{id:'broccoli',n:'Брокколи',e:'🥦',t:'v',tg:150},{id:'pumpkin',n:'Тыква',e:'🎃',t:'v',tg:150},{id:'patisson',n:'Патиссон',e:'🫛',t:'v',tg:150},
+{id:'buckwheat',n:'Гречневая каша',e:'🥣',t:'c',tg:150},{id:'rice',n:'Рисовая каша',e:'🍚',t:'c',tg:150},{id:'corn',n:'Кукурузная каша',e:'🌽',t:'c',tg:150},
+{id:'potato',n:'Картофель',e:'🥔',t:'v',tg:150},{id:'green_peas',n:'Зелёный горошек',e:'🟢',t:'v',tg:150},
+{id:'rabbit',n:'Кролик',e:'🐇',t:'m',tg:50},{id:'turkey',n:'Индейка',e:'🦃',t:'m',tg:50},{id:'beef',n:'Говядина',e:'🐄',t:'m',tg:50},{id:'chicken',n:'Цыплёнок',e:'🐔',t:'m',tg:50},
+{id:'apple',n:'Яблоко',e:'🍏',t:'f',tg:70},{id:'pear',n:'Груша',e:'🍐',t:'f',tg:70},{id:'banana',n:'Банан',e:'🍌',t:'f',tg:70},{id:'prune',n:'Чернослив',e:'🫐',t:'f',tg:80},
+{id:'egg_yolk',n:'Желток',e:'🥚',t:'y',tg:0.5,u:'шт',fr:'2-3 р/нед'},
+{id:'peach',n:'Персик',e:'🍑',t:'f',tg:80},{id:'apricot',n:'Абрикос',e:'🟠',t:'f',tg:80},{id:'plum',n:'Слива',e:'🟣',t:'f',tg:80},
+{id:'carrot',n:'Морковь',e:'🥕',t:'v',tg:150,fr:'2-3 р/нед'},{id:'string_bean',n:'Стручковая фасоль',e:'🫘',t:'v',tg:150},
+{id:'oat',n:'Овсяная каша',e:'🥣',t:'c',tg:180,nt:'Глютен'},{id:'pork',n:'Свинина',e:'🥩',t:'m',tg:70},
+{id:'tvorog',n:'Творог',e:'🧀',t:'d',tg:40},{id:'kefir',n:'Кефир / йогурт',e:'🥛',t:'k',tg:200,u:'мл'},
+{id:'cookie',n:'Печенье',e:'🍪',t:'o',tg:5},{id:'bread',n:'Хлеб',e:'🍞',t:'o',tg:10},
+{id:'fish',n:'Треска/хек',e:'🐟',t:'fi',tg:60,fr:'2 р/нед'},
+{id:'cabbage',n:'Белокочанная капуста',e:'🥬',t:'v',tg:150},{id:'beetroot',n:'Свёкла',e:'🟤',t:'v',tg:150},
+{id:'blueberry',n:'Черника',e:'🫐',t:'f',tg:50},{id:'blackcurrant',n:'Чёрная смородина',e:'⚫',t:'f',tg:50},
+{id:'wheat',n:'Пшеничная каша',e:'🌾',t:'c',tg:200,nt:'Глютен'},{id:'multigrain',n:'Многозерновая каша',e:'🥣',t:'c',tg:200},
+{id:'pasta',n:'Макароны',e:'🍝',t:'o',tg:50},
 ];
 
-const RAMP = [
-{day:1,label:'½ ч.л.',g:3},{day:2,label:'1 ч.л.',g:5},{day:3,label:'2 ч.л.',g:10},
-{day:4,label:'3 ч.л.',g:15},{day:5,label:'5 ч.л.',g:25},{day:6,label:'7 ч.л.',g:35},
-{day:7,label:'50 г',g:50},{day:8,label:'70 г',g:70},{day:9,label:'100 г',g:100},
-{day:10,label:'120 г',g:120},{day:11,label:'150 г',g:150}
-];
+const RAMP=[{d:1,l:'1 ч.л.',g:5},{d:2,l:'2 ч.л.',g:10},{d:3,l:'4 ч.л.',g:20},{d:4,l:'8 ч.л.',g:40},{d:5,l:'80 г',g:80},{d:6,l:'120 г',g:120},{d:7,l:'150 г',g:150}];
+const RD=7;
+const TL={v:'Овощ',c:'Каша',m:'Мясо',f:'Фрукт',y:'Желток',fi:'Рыба',d:'Молочное',k:'Молочное',o:'Допы'};
+const TC={v:'tv',c:'tc',m:'tm',f:'tf',y:'te',fi:'tfi',d:'td',k:'td',o:'to'};
 
-const TYPE_LABELS = {vegetable:'Овощ',cereal:'Каша',meat:'Мясо',fruit:'Фрукт',egg:'Желток',fish:'Рыба',other:'Допы'};
-const TYPE_CLASS = {vegetable:'type-vegetable',cereal:'type-cereal',meat:'type-meat',fruit:'type-fruit',egg:'type-egg',fish:'type-fish',other:'type-other'};
+// Ramp arrays per type
+const vL=['1 ч.л.','2 ч.л.','4 ч.л.','8 ч.л.','80 г','120 г','150 г'];
+const mL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','30 г','40 г','50 г'];
+const fL=['1 ч.л.','2 ч.л.','4 ч.л.','6 ч.л.','40 г','50 г','70 г'];
+const yL=['крошка','⅛ шт','¼ шт','¼ шт','¼ шт','¼ шт','½ шт'];
+const dL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','25 г','30 г','40 г'];
+const kL=['30 мл','50 мл','70 мл','100 мл','130 мл','170 мл','200 мл'];
+const fiL=['1 ч.л.','2 ч.л.','3 ч.л.','4 ч.л.','30 г','40 г','60 г'];
+const vR=[5,10,20,40,80,120,150];
 
-let state = loadState();
-let openPanels = new Set();
-
-function loadState(){
-try{
-// Version check: clear old state if from previous version with preChecked
-const ver=localStorage.getItem('prikorm_version');
-if(ver!=='4'){
-localStorage.removeItem('prikorm_state');
-localStorage.setItem('prikorm_version','4');
+// Generate day plan
+const DAYS=[];
+(function(){
+let day=1;
+const pool={v:[],c:[],m:[],f:[],y:[],d:[],k:[],fi:[],o:[]};
+P.forEach(p=>{
+const rL=p.t==='m'?mL:p.t==='f'?fL:p.t==='y'?yL:p.t==='d'?dL:p.t==='k'?kL:p.t==='fi'?fiL:vL;
+for(let d=0;d<7;d++){
+const em=p.e+' '+p.n;
+let text=em+' — '+rL[d];
+const ctx=[];
+if(p.t==='v'){
+const fill=150-vR[d];
+if(fill>0&&pool.v.length>0)text+='  +  '+pool.v[pool.v.length-1].e+' '+pool.v[pool.v.length-1].n+' '+fill+' г';
+if(pool.c.length>0)ctx.push(pool.c[pool.c.length-1].e+' каша 150 г');
+if(pool.m.length>0)ctx.push(pool.m[pool.m.length-1].e+' мясо '+pool.m[pool.m.length-1].tg+' г');
+if(pool.f.length>0)ctx.push(pool.f[pool.f.length-1].e+' фрукты 70 г');
+}else if(p.t==='c'){
+const fill=150-vR[d];
+if(fill>0&&pool.c.length>0)text+='  +  '+pool.c[pool.c.length-1].e+' '+pool.c[pool.c.length-1].n+' '+fill+' г';
+if(pool.v.length>0)ctx.push(pool.v.slice(-2).map(x=>x.e).join('+')+' овощи 150 г');
+if(pool.m.length>0)ctx.push(pool.m[pool.m.length-1].e+' мясо к овощам');
+}else if(p.t==='m'){
+text=em+' — '+rL[d]+' (к овощам 150 г)';
+if(pool.c.length>0)ctx.push(pool.c[pool.c.length-1].e+' каша 150 г');
+if(pool.f.length>0)ctx.push(pool.f[pool.f.length-1].e+' фрукты 70 г');
+}else if(p.t==='f'){
+ctx.push('каша 150 г, овощи + мясо');
+}else if(p.t==='y'){
+text=em+' — '+rL[d]+' (в кашу)';
+ctx.push('каша, овощи + мясо, фрукты');
+}else if(p.t==='d'){
+ctx.push('каша, овощи + мясо, фрукты');
+}else if(p.t==='k'){
+ctx.push('каша, овощи + мясо, фрукты, творог');
+}else if(p.t==='fi'){
+text=em+' — '+rL[d]+' (вместо мяса, к овощам)';
+ctx.push('каша, фрукты');
+}else{
+ctx.push('остальное как обычно');
 }
-const s=localStorage.getItem('prikorm_state');
-if(s){
-const parsed=JSON.parse(s);
-PRODUCTS.forEach(p=>{if(!parsed[p.id])parsed[p.id]={status:'pending',days:[],notes:'',reaction:''}});
-return parsed;
+DAYS.push({day,newLine:text,ctx:ctx.join(', ')});
+day++;
 }
-}catch(e){}
-const s={};
-PRODUCTS.forEach(p=>{
-s[p.id]={status:'pending',days:[],notes:'',reaction:''};
+pool[p.t]=pool[p.t]||[];
+pool[p.t].push(p);
 });
-return s;
-}
+})();
 
-function saveState(){localStorage.setItem('prikorm_state',JSON.stringify(state))}
+// State
+let pState=loadPS();
+let dState=loadDS();
 
-function switchTab(id,btn){
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-document.getElementById('tab-'+id).classList.add('active');
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-if(id==='stats')renderStats();
-if(id==='schedule')renderSchedule();
-}
+function loadPS(){try{const v=localStorage.getItem('_v');if(v!=='20'){localStorage.removeItem('_ps');localStorage.removeItem('_ds');localStorage.setItem('_v','20')}const s=localStorage.getItem('_ps');if(s){const r=JSON.parse(s);P.forEach(p=>{if(!r[p.id])r[p.id]={s:'pending',days:[],notes:''}});return r}}catch(e){}const r={};P.forEach(p=>{r[p.id]={s:'pending',days:[],notes:''}});return r}
+function loadDS(){try{const s=localStorage.getItem('_ds');if(s)return JSON.parse(s)}catch(e){}return new Array(DAYS.length).fill(false)}
+function savePS(){localStorage.setItem('_ps',JSON.stringify(pState))}
+function saveDS(){localStorage.setItem('_ds',JSON.stringify(dState))}
 
-function cycleStatus(id){
-const s=state[id];
-if(s.status==='pending')s.status='done';
-else if(s.status==='done')s.status='reacted';
-else s.status='pending';
-saveState();
-// Update in-place
-const card=document.querySelector(`[data-pid="${id}"]`);
-if(card){
-const check=card.querySelector('.product-check');
-check.className='product-check '+s.status;
-updateProgress(card,id);
-}
-}
+// Navigation
+function mainSw(id,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='plan')renderPlan()}
+function subSw(id,btn){document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));document.getElementById('sub-'+id).classList.add('active');document.querySelectorAll('.sub-nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
 
-function toggleDay(id,dayIdx){
-if(!state[id].days)state[id].days=[];
-state[id].days[dayIdx]=!state[id].days[dayIdx];
-saveState();
-// Update just the dot and progress, don't re-render
-const card=document.querySelector(`[data-pid="${id}"]`);
-if(card){
-const dots=card.querySelectorAll('.day-dot');
-if(dots[dayIdx]){
-dots[dayIdx].classList.toggle('filled',state[id].days[dayIdx]);
-}
-updateProgress(card,id);
-}
-}
+// Product tracker
+function cycleS(id){const s=pState[id];if(s.s==='pending')s.s='done';else if(s.s==='done')s.s='reacted';else s.s='pending';savePS();const c=document.querySelector(`[data-pid="${id}"]`);if(c){c.querySelector('.pcheck').className='pcheck '+s.s;updBar(c,id)}}
+function togDay(id,i){if(!pState[id].days)pState[id].days=[];pState[id].days[i]=!pState[id].days[i];savePS();const c=document.querySelector(`[data-pid="${id}"]`);if(c){const dots=c.querySelectorAll('.ddot');if(dots[i])dots[i].classList.toggle('filled',pState[id].days[i]);updBar(c,id)}}
+function updBar(c,id){const s=pState[id],dc=(s.days||[]).filter(Boolean).length,pct=Math.min(100,Math.round(dc/RD*100));const f=c.querySelector('.pfill');if(f){f.style.width=pct+'%';f.style.background=s.s==='reacted'?'var(--danger)':'var(--ok)'}const v=c.querySelector('.pvol');if(v)v.textContent=`${dc}/${RD} · ${pct}%`}
+function togDet(id){document.getElementById('det-'+id).classList.toggle('open')}
+function saveN(id,v){pState[id].notes=v;savePS()}
+function filterP(){const q=document.getElementById('srch').value.toLowerCase();document.querySelectorAll('.pcard').forEach(el=>{el.classList.toggle('hidden',q&&!el.dataset.name.toLowerCase().includes(q))})}
 
-function updateProgress(card,id){
-const s=state[id];
-const daysCompleted=(s.days||[]).filter(Boolean).length;
-const pct=Math.min(100,Math.round(daysCompleted/11*100));
-const fill=card.querySelector('.progress-fill');
-if(fill){
-fill.style.width=pct+'%';
-fill.style.background=s.status==='reacted'?'var(--danger)':'var(--ok)';
-}
-const vol=card.querySelector('.volume-info');
-if(vol)vol.textContent=`День ${daysCompleted}/11 · ${pct}%`;
-}
-
-function toggleDetail(id){
-const el=document.getElementById('detail-'+id);
-el.classList.toggle('open');
-}
-
-function saveNote(id,val){state[id].notes=val;saveState()}
-
-function filterProducts(){
-const q=document.getElementById('search').value.toLowerCase();
-document.querySelectorAll('.product-card-wrap').forEach(el=>{
-const name=el.dataset.name.toLowerCase();
-el.classList.toggle('hidden',q&&!name.includes(q));
-});
-}
-
-function renderTracker(){
-const cont=document.getElementById('tracker-content');
-let html='';
-let curMonth=0;
-PRODUCTS.forEach(p=>{
-if(p.month!==curMonth){
-curMonth=p.month;
-html+=`<div class="month-header">${curMonth} месяцев</div>`;
-}
-const s=state[p.id]||{status:'pending',days:[],notes:''};
-const daysCompleted=(s.days||[]).filter(Boolean).length;
-const pct=Math.min(100,Math.round(daysCompleted/11*100));
-const statusClass=s.status;
-const unit=p.unit||'г';
-const targetLabel=p.target<1?p.target+' '+unit:p.target+' '+unit;
-
-html+=`<div class="card product-card-wrap" data-name="${p.name}" data-pid="${p.id}">
+function renderProds(){
+const c=document.getElementById('prod-list');let h='';
+P.forEach(p=>{
+const s=pState[p.id]||{s:'pending',days:[],notes:''};
+const dc=(s.days||[]).filter(Boolean).length,pct=Math.min(100,Math.round(dc/RD*100));
+const u=p.u||'г',tl=p.tg+' '+u;
+h+=`<div class="card pcard" data-name="${p.n}" data-pid="${p.id}">
 <div class="product-row">
-<div class="product-check ${statusClass}" onclick="cycleStatus('${p.id}')" title="Нажмите для переключения"></div>
-<div class="product-info">
-<div class="product-name">${p.emoji} ${p.name}</div>
-<div class="product-meta">Нед. ${p.week} · Цель: ${targetLabel}${p.freq?' · '+p.freq:''}${p.note?' · ⚠️ '+p.note:''}</div>
-<span class="product-type ${TYPE_CLASS[p.type]}">${TYPE_LABELS[p.type]}</span>
+<div class="pcheck ${s.s}" onclick="cycleS('${p.id}')"></div>
+<div style="flex:1;min-width:0">
+<div class="pname">${p.e} ${p.n}</div>
+<div class="pmeta">Цель: ${tl}${p.fr?' · '+p.fr:''}${p.nt?' · ⚠️ '+p.nt:''}</div>
+<span class="ptype ${TC[p.t]}">${TL[p.t]}</span>
 </div>
 </div>
-<div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${s.status==='reacted'?'var(--danger)':'var(--ok)'}"></div></div>
-<div class="volume-info">День ${daysCompleted}/11 · ${pct}%</div>
-<button class="expand-btn" onclick="toggleDetail('${p.id}')">Подробнее ▾</button>
-<div class="detail-panel" id="detail-${p.id}">
-<div style="font-size:12px;font-weight:700;margin-bottom:6px">Отметьте дни введения:</div>
-<div class="day-tracker">
-${RAMP.map((r,i)=>{
-const filled=(s.days||[])[i];
-return `<div class="day-dot ${filled?'filled':''}" onclick="toggleDay('${p.id}',${i})" title="День ${r.day}: ${r.label}">${r.day}</div>`;
-}).join('')}
-</div>
-<div style="margin-top:8px">
-${RAMP.map((r,i)=>`<div class="detail-row"><span>День ${r.day}</span><span>${r.label} (${r.g} г)</span></div>`).join('')}
-</div>
-<textarea class="note-input" rows="2" placeholder="Заметки (реакции, стул, кожа...)" 
-oninput="saveNote('${p.id}',this.value)">${s.notes||''}</textarea>
-</div>
-</div>`;
+<div class="pbar"><div class="pfill" style="width:${pct}%;background:${s.s==='reacted'?'var(--danger)':'var(--ok)'}"></div></div>
+<div class="pvol">${dc}/${RD} · ${pct}%</div>
+<button class="expand" onclick="togDet('${p.id}')">подробнее ▾</button>
+<div class="detail" id="det-${p.id}">
+<div style="font-size:11px;font-weight:700;margin-bottom:4px">Дни введения:</div>
+<div class="dtrack">${RAMP.map((r,i)=>{const f=(s.days||[])[i];return`<div class="ddot ${f?'filled':''}" onclick="togDay('${p.id}',${i})" title="День ${r.d}: ${r.l}">${r.d}</div>`}).join('')}</div>
+<div style="margin-top:6px">${RAMP.map(r=>`<div class="drow"><span>День ${r.d}</span><span>${r.l} (${r.g} г)</span></div>`).join('')}</div>
+<textarea class="note" rows="2" placeholder="Заметки..." oninput="saveN('${p.id}',this.value)">${s.notes||''}</textarea>
+</div></div>`;
 });
-cont.innerHTML=html;
+c.innerHTML=h;
 }
 
-function renderSchedule(){
-const cont=document.getElementById('schedule-content');
-const meals={
-5:{title:'5 месяцев — 1 приём прикорма',rows:[
-'06:00 — Лечебная смесь','10:00 — Овощи + докорм смесью','14:00 — Лечебная смесь','18:00 — Лечебная смесь','22:00 — Лечебная смесь'
-]},
-6:{title:'6 месяцев — 2 приёма прикорма',rows:[
-'06:00 — Лечебная смесь','10:00 — Каша + масло','14:00 — Овощи + мясо + масло','18:00 — Лечебная смесь','22:00 — Лечебная смесь'
-]},
-7:{title:'7 месяцев — 3 приёма',rows:[
-'06:00 — Лечебная смесь','10:00 — Каша + масло + ¼ желтка','14:00 — Овощи + мясо + масло','18:00 — Фрукты + смесь','22:00 — Лечебная смесь'
-]},
-8:{title:'8–9 месяцев — 3 приёма',rows:[
-'06:00 — Лечебная смесь','10:00 — Каша 180 г + масло + ½ желтка','14:00 — Овощи 150 г + мясо/рыба 60–70 г','18:00 — Фрукты 80 г + печенье + смесь','22:00 — Лечебная смесь'
-]},
-10:{title:'10–12 месяцев — 4 приёма',rows:[
-'06:00 — Лечебная смесь','10:00 — Каша 200 г + масло + ½ желтка + фрукт','14:00 — Овощи 150 г + мясо/рыба 80–100 г + хлеб','18:00 — Фрукты 100 г + печенье/каша + смесь','22:00 — Лечебная смесь'
-]}
-};
-let html='<div class="section-title"><span>🕐</span> Режим кормлений по месяцам</div>';
-Object.entries(meals).forEach(([m,data])=>{
-html+=`<div class="month-header">${data.title}</div><div class="card" style="font-size:13px;line-height:2">`;
-data.rows.forEach(r=>{
-const bold=r.includes('Прикорм')||r.includes('Каша')||r.includes('Овощи')||r.includes('Фрукты');
-html+=`<div${bold?' style="font-weight:700;color:var(--accent)"':''}>${r}</div>`;
+// Day plan
+function togPlan(i){dState[i]=!dState[i];saveDS();renderPlan()}
+function renderPlan(){
+let todoH='',doneH='',dc=0;
+DAYS.forEach((d,i)=>{
+const ok=dState[i];if(ok)dc++;
+const html=`<div class="dcard"><div class="dchk ${ok?'done':''}" onclick="togPlan(${i})"></div><div style="flex:1;min-width:0"><div class="dnum">День ${d.day}</div><div class="dnew">🆕 ${d.newLine}</div>${d.ctx?`<div class="dctx">+ ${d.ctx}</div>`:''}</div></div>`;
+if(ok)doneH+=html;else todoH+=html;
 });
-html+='</div>';
-});
-cont.innerHTML=html;
+document.getElementById('plan-cnt').innerHTML=`Осталось: <b>${DAYS.length-dc}</b> из ${DAYS.length}`;
+document.getElementById('todo-list').innerHTML=todoH||'<div class="empty">Всё введено! 🎉</div>';
+document.getElementById('done-list').innerHTML=doneH||'<div class="empty">Пока ничего</div>';
 }
 
-function renderStats(){
-const total=PRODUCTS.length;
-const done=PRODUCTS.filter(p=>(state[p.id]||{}).status==='done').length;
-const reacted=PRODUCTS.filter(p=>(state[p.id]||{}).status==='reacted').length;
-const pending=total-done-reacted;
-document.getElementById('stats-grid').innerHTML=`
-<div class="stat-card"><div class="stat-num" style="color:var(--ok)">${done}</div><div class="stat-label">Введено ✓</div></div>
-<div class="stat-card"><div class="stat-num" style="color:var(--danger)">${reacted}</div><div class="stat-label">Реакция ✕</div></div>
-<div class="stat-card"><div class="stat-num" style="color:var(--accent)">${pending}</div><div class="stat-label">Осталось</div></div>
-<div class="stat-card"><div class="stat-num" style="color:var(--accent3)">${total}</div><div class="stat-label">Всего</div></div>`;
-}
+function resetAll(){if(confirm('Сбросить весь прогресс?')){localStorage.removeItem('_ps');localStorage.removeItem('_ds');pState=loadPS();dState=loadDS();renderProds();renderPlan();alert('Готово')}}
 
-function resetAll(){
-if(confirm('Точно сбросить весь прогресс? Это действие нельзя отменить.')){
-localStorage.removeItem('prikorm_state');
-state=loadState();
-PRODUCTS.forEach(p=>{state[p.id]={status:'pending',days:[],notes:'',reaction:''}});
-saveState();renderTracker();renderStats();
-alert('Прогресс сброшен');
-}
-}
-
-renderTracker();
+renderProds();
 </script>
 </body>
 </html>
